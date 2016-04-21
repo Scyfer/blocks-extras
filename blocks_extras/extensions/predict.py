@@ -22,7 +22,7 @@ class PredictDataStream(SimpleExtension):
 
     Attributes
     ----------
-    prediction : `collections.OrderedDict`
+    predictions : `collections.OrderedDict`
         Storage for tensor evaluations. Maps tensor names to outputs
         of type `numpy.ndarray`. If the callback has not been invoked,
         this attribute is set to None.
@@ -32,7 +32,7 @@ class PredictDataStream(SimpleExtension):
         self.data_stream = data_stream
         self.variables = variables
         self.path = path
-        self.prediction = None
+        self.predictions = None
 
         kwargs.setdefault('after_training', True)
         super(PredictDataStream, self).__init__(**kwargs)
@@ -52,5 +52,7 @@ class PredictDataStream(SimpleExtension):
         for var in self.variables:
             predictions[var.name] = numpy.concatenate(predictions[var.name],
                                                       axis=0)
+        self.predictions = predictions
+
         if self.path is not None:
             numpy.savez(self.path, **predictions)
